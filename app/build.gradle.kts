@@ -32,9 +32,11 @@ android {
 }
 
 dependencies {
-    val lifecycle_version = "2.3.1"
-    val arch_version = "2.1.0"
+    val lifecycleVersion = "2.3.1"
+    val archVersion = "2.1.0"
+    val orbitVersion = "4.2.0"
 
+    implementation("org.orbit-mvi:orbit-viewmodel:$orbitVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
@@ -49,24 +51,24 @@ dependencies {
     implementation("com.jakewharton.timber:timber:4.7.1")
 
     // ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     // LiveData
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
     // Lifecycles only (without ViewModel or LiveData)
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion")
 
     // Saved state module for ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion")
 
     // Annotation processor
 //    kapt("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
     // alternately - if using Java8, use the following instead of lifecycle-compiler
-    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
 
     // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
-    implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-process:$lifecycleVersion")
     // optional - ReactiveStreams support for LiveData
-    implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
 
 
 //    implementation("io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion")
@@ -74,8 +76,10 @@ dependencies {
 //    implementation("io.reactivex.rxjava2:rxkotlin:2.3.0")
 
     // optional - Test helpers for LiveData
-    testImplementation("androidx.arch.core:core-testing:$arch_version")
+    testImplementation("androidx.arch.core:core-testing:$archVersion")
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.orbit-mvi:orbit-test:$orbitVersion")
+
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import com.dgelormini.mvisample.R
 import com.dgelormini.mvisample.domain.GetNoteListUseCase
 import com.dgelormini.mvisample.domain.Note
 import com.dgelormini.mvisample.presentation.notedetail.NoteDetailFragment
+import org.orbitmvi.orbit.viewmodel.observe
 
 class NoteListFragment : Fragment() {
 
@@ -40,12 +42,22 @@ class NoteListFragment : Fragment() {
         // Normally ViewModelFactory should be injected here along with its UseCases injected into it
         viewModel = ViewModelProvider(this, NoteListViewModelFactory(GetNoteListUseCase()))
             .get(NoteListViewModel::class.java)
-/*
+
+        viewModel.observe(state = ::renderState, sideEffect = ::handleSideEffect, lifecycleOwner = this)
+
+        viewModel.loadNotes()
+        /*
         viewModel.observableState.observe(this, Observer { state ->
             state?.let { renderState(state) }
         })
 
         viewModel.dispatch(Action.LoadNotes)*/
+    }
+
+    private fun handleSideEffect(sideEffect: SideEffect) {
+        when (sideEffect) {
+            is SideEffect.NavigateToDetails -> handleNoteClicked(sideEffect.note)
+        }
     }
 
 
@@ -58,13 +70,17 @@ class NoteListFragment : Fragment() {
     }
 
     private fun onNoteClicked(note: Note) {
+        viewModel.selectNote(note)
+    }
+
+    private fun handleNoteClicked(note: Note) {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.container, NoteDetailFragment.newInstance(note.id))
             .addToBackStack(null)
             .commit()
     }
 
-    /*private fun renderState(state: State) {
+    private fun renderState(state: State) {
         with(state) {
             when {
                 isLoading -> renderLoadingState()
@@ -75,18 +91,17 @@ class NoteListFragment : Fragment() {
     }
 
     private fun renderLoadingState() {
-        loadingIndicator.visibility = View.VISIBLE
+        requireActivity().findViewById<View>(R.id.loadingIndicator).visibility = View.VISIBLE
     }
 
     private fun renderErrorState() {
-        loadingIndicator.visibility = View.GONE
+        requireActivity().findViewById<View>(R.id.loadingIndicator).visibility = View.GONE
         Toast.makeText(requireContext(), R.string.error_loading_notes, Toast.LENGTH_LONG).show()
     }
 
     private fun renderNotesState(notes: List<Note>) {
-        loadingIndicator.visibility = View.GONE
+        requireActivity().findViewById<View>(R.id.loadingIndicator).visibility = View.GONE
         recyclerViewAdapter.updateNotes(notes)
-        notesRecyclerView.visibility = View.VISIBLE
+        requireActivity().findViewById<View>(R.id.notesRecyclerView).visibility = View.VISIBLE
     }
-*/
 }

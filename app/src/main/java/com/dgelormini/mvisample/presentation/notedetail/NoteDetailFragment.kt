@@ -12,6 +12,7 @@ import com.dgelormini.mvisample.R
 import com.dgelormini.mvisample.domain.DeleteNoteUseCase
 import com.dgelormini.mvisample.domain.GetNoteDetailUseCase
 import com.dgelormini.mvisample.domain.Note
+import org.orbitmvi.orbit.viewmodel.observe
 
 private const val NOTE_ID = "noteId"
 
@@ -51,6 +52,9 @@ class NoteDetailFragment : Fragment() {
             this,
             NoteDetailViewModelFactory(GetNoteDetailUseCase(), DeleteNoteUseCase())
         ).get(NoteDetailViewModel::class.java)
+
+        viewModel.observe(this, ::renderState, ::handleSideEffect)
+        viewModel.loadNoteDetail(noteId)
 /*
         viewModel.observableState.observe(this, Observer { state ->
             state?.let { renderState(state) }
@@ -65,7 +69,14 @@ class NoteDetailFragment : Fragment() {
         }*/
     }
 
-    /*private fun renderState(state: State) {
+    private fun handleSideEffect(sideEffect: SideEffect) {
+        // TODO: Handle side effects
+//        when(sideEffect) {
+//            is SideEffect.
+//        }
+    }
+
+    private fun renderState(state: State) {
         with(state) {
             when {
                 isLoadError -> renderLoadNoteDetailError()
@@ -75,7 +86,7 @@ class NoteDetailFragment : Fragment() {
             }
         }
     }
-*/
+
     private fun renderNoteDetailState(note: Note) {
 /*        noteIdView.visibility = View.VISIBLE
         noteTextView.visibility = View.VISIBLE

@@ -2,17 +2,43 @@ package com.dgelormini.mvisample.presentation.notelist
 
 import androidx.lifecycle.ViewModel
 import com.dgelormini.mvisample.domain.GetNoteListUseCase
-import kotlinx.coroutines.Dispatchers
+import com.dgelormini.mvisample.domain.Note
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.delay
+import org.orbitmvi.orbit.Container
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
+import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.container
+import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NoteListViewModel(
     private val loadNoteListUseCase: GetNoteListUseCase
-) : ViewModel()
+) : ContainerHost<State, SideEffect>, ViewModel() {
 
-// TODO: Implement
+    override val container: Container<State, SideEffect> = container<State, SideEffect>(State())
+
+    fun selectNote(note: Note) = intent {
+        // TODO: Does it make sense to just emit a side-effect?
+        postSideEffect(SideEffect.NavigateToDetails(note))
+    }
+
+    fun loadNotes() = intent {
+        reduce {
+            state.copy(isLoading = true, notes = emptyList())
+        }
+
+        delay(750) // Give it a chance to show loading indicator
+
+        val notes = loadNoteListUseCase.loadAll().ifEmpty { emptyList() }
+
+        reduce {
+                state.copy(isLoading = false, notes = notes)
+        }
+    }
+}
 
 //    override val initialState = initialState ?: State(isIdle = true)
 
