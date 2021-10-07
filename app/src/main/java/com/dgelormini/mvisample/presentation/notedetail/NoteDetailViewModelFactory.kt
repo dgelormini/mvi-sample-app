@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.dgelormini.mvisample.domain.DeleteNoteUseCase
 import com.dgelormini.mvisample.domain.GetNoteDetailUseCase
 
-class NoteDetailViewModelFactory(
+internal class NoteDetailViewModelFactory(
     private val noteDetailUseCase: GetNoteDetailUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase
 ) : ViewModelProvider.NewInstanceFactory() {

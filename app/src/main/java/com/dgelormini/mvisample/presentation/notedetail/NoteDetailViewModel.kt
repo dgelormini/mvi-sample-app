@@ -15,7 +15,7 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import timber.log.Timber
 
-class NoteDetailViewModel(
+internal class NoteDetailViewModel(
     private val noteDetailUseCase: GetNoteDetailUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase
 ) : ContainerHost<State, SideEffect>, ViewModel() {
@@ -33,15 +33,24 @@ class NoteDetailViewModel(
         }
     }
 
-    fun deleteNote(note: Note) = intent {
+    fun deleteNote(noteId: Long) = intent {
         reduce {
             state.copy(isLoading = true)
         }
 
-        deleteNoteUseCase.delete(note)
-
+        val deleteSuccess = try {
+            val note = noteDetailUseCase.findById(noteId)
+            deleteNoteUseCase.delete(note)
+            true
+        } catch (e: Exception) {
+            false
+        }
         reduce {
-            state.copy(isLoading = false, isNoteDeleted = true)
+            state.copy(
+                isLoading = false,
+                isNoteDeleted = deleteSuccess,
+                isDeleteError = !deleteSuccess
+            )
         }
     }
 
