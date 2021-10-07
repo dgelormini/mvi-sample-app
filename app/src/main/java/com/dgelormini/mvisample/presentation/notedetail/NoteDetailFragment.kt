@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dgelormini.mvisample.R
+import com.dgelormini.mvisample.databinding.NoteDetailBinding
 import com.dgelormini.mvisample.domain.DeleteNoteUseCase
 import com.dgelormini.mvisample.domain.GetNoteDetailUseCase
 import com.dgelormini.mvisample.domain.Note
@@ -35,12 +36,16 @@ class NoteDetailFragment : Fragment() {
 
     private lateinit var viewModel: NoteDetailViewModel
 
+    private var _binding: NoteDetailBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.note_detail, container, false)
+        _binding = NoteDetailBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,24 +81,29 @@ class NoteDetailFragment : Fragment() {
         }
     }
 */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun renderNoteDetailState(note: Note) {
-/*        noteIdView.visibility = View.VISIBLE
-        noteTextView.visibility = View.VISIBLE
-        noteIdView.text = String.format(getString(R.string.note_detail_id), note.id)
-        noteTextView.text = String.format(getString(R.string.note_detail_text), note.text)*/
+        binding.noteIdView.visibility = View.VISIBLE
+        binding.noteTextView.visibility = View.VISIBLE
+        binding.noteIdView.text = String.format(getString(R.string.note_detail_id), note.id)
+        binding.noteTextView.text = String.format(getString(R.string.note_detail_text), note.text)
     }
 
     private fun renderLoadNoteDetailError() {
-        /*Toast.makeText(requireContext(), R.string.error_loading_note, Toast.LENGTH_LONG).show()
-        noteIdView.visibility = View.GONE
-        noteTextView.visibility = View.GONE*/
+        Toast.makeText(requireContext(), R.string.error_loading_note, Toast.LENGTH_LONG).show()
+        binding.noteIdView.visibility = View.GONE
+        binding.noteTextView.visibility = View.GONE
     }
 
     private fun renderNoteDeleteError() {
-//        Toast.makeText(requireContext(), R.string.error_deleting_note, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), R.string.error_deleting_note, Toast.LENGTH_LONG).show()
     }
 
     private fun renderNoteDeleted() {
-//        requireActivity().supportFragmentManager.popBackStack()
+        requireActivity().supportFragmentManager.popBackStack()
     }
 }
