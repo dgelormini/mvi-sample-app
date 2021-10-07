@@ -6,17 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.mvrx.MavericksView
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
 import com.dgelormini.mvisample.R
-import com.dgelormini.mvisample.databinding.NoteDetailBinding
 import com.dgelormini.mvisample.databinding.NoteListBinding
-import com.dgelormini.mvisample.domain.GetNoteListUseCase
 import com.dgelormini.mvisample.domain.Note
 import com.dgelormini.mvisample.presentation.notedetail.NoteDetailFragment
 
-class NoteListFragment : Fragment() {
+class NoteListFragment : MavericksView, Fragment() {
 
     private val clickListener: ClickListener = this::onNoteClicked
 
@@ -26,7 +26,7 @@ class NoteListFragment : Fragment() {
         fun newInstance() = NoteListFragment()
     }
 
-    private lateinit var viewModel: NoteListViewModel
+    private val viewModel: NoteListViewModel by fragmentViewModel()
     private var _binding: NoteListBinding? = null
     private val binding get() = _binding!!
 
@@ -41,17 +41,10 @@ class NoteListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupRecyclerView()
 
-        // Normally ViewModelFactory should be injected here along with its UseCases injected into it
-        viewModel = ViewModelProvider(this, NoteListViewModelFactory(GetNoteListUseCase()))
-            .get(NoteListViewModel::class.java)
-/*
-        viewModel.observableState.observe(this, Observer { state ->
-            state?.let { renderState(state) }
-        })
-
-        viewModel.dispatch(Action.LoadNotes)*/
+        viewModel.loadNotes()
     }
 
     override fun onDestroyView() {
@@ -74,16 +67,6 @@ class NoteListFragment : Fragment() {
             .commit()
     }
 
-    /*private fun renderState(state: State) {
-        with(state) {
-            when {
-                isLoading -> renderLoadingState()
-                isError -> renderErrorState()
-                else -> renderNotesState(notes)
-            }
-        }
-    }
-*/
     private fun renderLoadingState() {
         binding.loadingIndicator.visibility = View.VISIBLE
     }
@@ -97,5 +80,15 @@ class NoteListFragment : Fragment() {
         binding.loadingIndicator.visibility = View.GONE
         recyclerViewAdapter.updateNotes(notes)
         binding.notesRecyclerView.visibility = View.VISIBLE
+    }
+
+    override fun invalidate() = withState(viewModel) {
+        with(it) {
+            when {
+                isLoading -> renderLoadingState()
+                isError -> renderErrorState()
+                else -> renderNotesState(notes)
+            }
+        }
     }
 }

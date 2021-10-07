@@ -1,59 +1,42 @@
 package com.dgelormini.mvisample.presentation.notelist
 
-import androidx.lifecycle.ViewModel
+import com.airbnb.mvrx.MavericksViewModel
+import com.airbnb.mvrx.MavericksViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
 import com.dgelormini.mvisample.domain.GetNoteListUseCase
-import kotlinx.coroutines.Dispatchers
+import com.dgelormini.mvisample.domain.Note
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class NoteListViewModel(
-    private val loadNoteListUseCase: GetNoteListUseCase
-) : ViewModel()
+    private val loadNoteListUseCase: GetNoteListUseCase,
+    initialState: State
+) : MavericksViewModel<State>(initialState) {
 
-// TODO: Implement
-
-//    override val initialState = initialState ?: State(isIdle = true)
-
-/*    private val reducer: Reducer<State, Change> = { state, change ->
-        when (change) {
-            is Change.Loading -> state.copy(
-                isIdle = false,
-                isLoading = true,
-                notes = emptyList(),
-                isError = false
-            )
-            is Change.Notes -> state.copy(
-                isLoading = false,
-                notes = change.notes
-            )
-            is Change.Error -> state.copy(
-                isLoading = false,
-                isError = true
-            )
+    companion object : MavericksViewModelFactory<NoteListViewModel, State> {
+        override fun create(viewModelContext: ViewModelContext, state: State): NoteListViewModel {
+            return NoteListViewModel(GetNoteListUseCase(), state)
         }
-    }*/
-/*
-    init {
-        viewModelScope.launch {
-            bindActions()
+
+        override fun initialState(viewModelContext: ViewModelContext): State {
+            return State(isIdle = true)
         }
     }
 
-    @ExperimentalCoroutinesApi
-    private suspend fun bindActions() {
-        val loadNotesChange: Flow<Change> = actions.filterIsInstance<Action.LoadNotes>()
-            .mapLatest { Change.Notes(loadNoteListUseCase.loadAll().ifEmpty { emptyList() }) }
-            .catch<Change> { emit(Change.Error(it)) } // TODO: Do we need to emit?
-            .flowOn(Dispatchers.IO)
-            .onStart { emit(Change.Loading) }
+    fun selectNote(note: Note) {
+        // TODO: Implement with MVI; currently just using click listener in Activity.
+    }
 
-        loadNotesChange.scan(initialState) { state, change -> reducer(state, change) }
-            .filterNot { it.isIdle }
-            .distinctUntilChanged()
-            .collect {
-                state.value = it
-            }
-    }*/
+    fun loadNotes() {
+        suspend {
+            delay(750)
+            loadNoteListUseCase.loadAll()
+        }.execute {
+            println(this)
+            copy(isLoading = !it.complete, notes = it.invoke() ?: emptyList())
+        }
+    }
+}
+
 

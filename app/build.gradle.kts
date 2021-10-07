@@ -7,7 +7,6 @@ android {
     compileSdkVersion(30)
 
     defaultConfig {
-//        applicationId "com.dgelormini.mvisample"
         minSdk = 24
         targetSdk = 0
         versionCode = 1
@@ -38,6 +37,8 @@ android {
 dependencies {
     val lifecycle_version = "2.3.1"
     val arch_version = "2.1.0"
+
+    implementation("com.airbnb.android:mavericks:2.4.0")
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
@@ -71,11 +72,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
     // optional - ReactiveStreams support for LiveData
     implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
-
-
-//    implementation("io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion")
-//    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
-//    implementation("io.reactivex.rxjava2:rxkotlin:2.3.0")
 
     // optional - Test helpers for LiveData
     testImplementation("androidx.arch.core:core-testing:$arch_version")
