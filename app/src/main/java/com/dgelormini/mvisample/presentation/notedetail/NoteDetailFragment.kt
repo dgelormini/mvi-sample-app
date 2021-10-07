@@ -8,15 +8,19 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.airbnb.mvrx.MavericksView
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
 import com.dgelormini.mvisample.R
 import com.dgelormini.mvisample.databinding.NoteDetailBinding
 import com.dgelormini.mvisample.domain.DeleteNoteUseCase
 import com.dgelormini.mvisample.domain.GetNoteDetailUseCase
 import com.dgelormini.mvisample.domain.Note
+import com.dgelormini.mvisample.presentation.notelist.NoteListViewModel
 
 private const val NOTE_ID = "noteId"
 
-class NoteDetailFragment : Fragment() {
+class NoteDetailFragment : MavericksView, Fragment() {
 
     private val noteId by lazy {
         arguments?.getLong(NOTE_ID)
@@ -34,8 +38,7 @@ class NoteDetailFragment : Fragment() {
         }
     }
 
-    private lateinit var viewModel: NoteDetailViewModel
-
+    private val viewModel: NoteDetailViewModel by fragmentViewModel()
     private var _binding: NoteDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -51,11 +54,13 @@ class NoteDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.loadNoteDetail(noteId)
+
         // Normally ViewModelFactory should be injected here along with its UseCases injected into it
-        viewModel = ViewModelProvider(
-            this,
-            NoteDetailViewModelFactory(GetNoteDetailUseCase(), DeleteNoteUseCase())
-        ).get(NoteDetailViewModel::class.java)
+//        viewModel = ViewModelProvider(
+//            this,
+//            NoteDetailViewModelFactory(GetNoteDetailUseCase(), DeleteNoteUseCase())
+//        ).get(NoteDetailViewModel::class.java)
 /*
         viewModel.observableState.observe(this, Observer { state ->
             state?.let { renderState(state) }
@@ -64,10 +69,10 @@ class NoteDetailFragment : Fragment() {
         if (savedInstanceState == null) {
             viewModel.dispatch(Action.LoadNoteDetail(noteId))
         }
-
-        deleteNoteButton.setOnClickListener {
-            viewModel.dispatch(Action.DeleteNote(noteId))
-        }*/
+*/
+        binding.deleteNoteButton.setOnClickListener {
+            viewModel.deleteNote(noteId)
+        }
     }
 
     /*private fun renderState(state: State) {
@@ -105,5 +110,16 @@ class NoteDetailFragment : Fragment() {
 
     private fun renderNoteDeleted() {
         requireActivity().supportFragmentManager.popBackStack()
+    }
+
+    override fun invalidate() = withState(viewModel) {
+        with(it) {
+            when {
+                isLoadError -> renderLoadNoteDetailError()
+                isDeleteError -> renderNoteDeleteError()
+                note != null -> renderNoteDetailState(note)
+                isNoteDeleted -> renderNoteDeleted()
+            }
+        }
     }
 }

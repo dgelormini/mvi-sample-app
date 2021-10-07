@@ -39,6 +39,8 @@ dependencies {
     val lifecycle_version = "2.3.1"
     val arch_version = "2.1.0"
 
+    implementation("com.airbnb.android:mavericks:2.4.0")
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1")
