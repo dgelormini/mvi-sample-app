@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgelormini.mvisample.R
-import com.dgelormini.mvisample.databinding.NoteDetailBinding
 import com.dgelormini.mvisample.databinding.NoteListBinding
 import com.dgelormini.mvisample.domain.GetNoteListUseCase
 import com.dgelormini.mvisample.domain.Note
@@ -51,12 +50,7 @@ class NoteListFragment : Fragment() {
         viewModel.observe(state = ::renderState, sideEffect = ::handleSideEffect, lifecycleOwner = this)
 
         viewModel.loadNotes()
-        /*
-        viewModel.observableState.observe(this, Observer { state ->
-            state?.let { renderState(state) }
-        })
 
-        viewModel.dispatch(Action.LoadNotes)*/
     }
 
     override fun onDestroyView() {

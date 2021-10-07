@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dgelormini.mvisample.R
 import com.dgelormini.mvisample.databinding.NoteDetailBinding
@@ -59,26 +58,18 @@ internal class NoteDetailFragment : Fragment() {
         ).get(NoteDetailViewModel::class.java)
 
         viewModel.observe(this, ::renderState, ::handleSideEffect)
-        viewModel.loadNoteDetail(noteId)
-/*
-        viewModel.observableState.observe(this, Observer { state ->
-            state?.let { renderState(state) }
-        })
 
         if (savedInstanceState == null) {
-            viewModel.dispatch(Action.LoadNoteDetail(noteId))
+            viewModel.loadNoteDetail(noteId)
         }
-*/
+
         binding.deleteNoteButton.setOnClickListener {
             viewModel.deleteNote(noteId)
         }
     }
 
     private fun handleSideEffect(sideEffect: SideEffect) {
-        // TODO: Handle side effects
-//        when(sideEffect) {
-//            is SideEffect.
-//        }
+        // TODO: Handle side effects, if needed
     }
 
     private fun renderState(state: State) {

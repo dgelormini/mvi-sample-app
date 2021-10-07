@@ -7,7 +7,6 @@ android {
     compileSdkVersion(30)
 
     defaultConfig {
-//        applicationId "com.dgelormini.mvisample"
         minSdk = 24
         targetSdk = 0
         versionCode = 1
@@ -19,7 +18,10 @@ android {
     buildTypes {
         named("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -65,7 +67,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion")
 
     // Annotation processor
-//    kapt("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
+    //    kapt("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
     // alternately - if using Java8, use the following instead of lifecycle-compiler
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
 
@@ -73,11 +75,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:$lifecycleVersion")
     // optional - ReactiveStreams support for LiveData
     implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycleVersion")
-
-
-//    implementation("io.reactivex.rxjava2:rxjava:$rootProject.ext.rxJavaVersion")
-//    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
-//    implementation("io.reactivex.rxjava2:rxkotlin:2.3.0")
 
     // optional - Test helpers for LiveData
     testImplementation("androidx.arch.core:core-testing:$archVersion")
