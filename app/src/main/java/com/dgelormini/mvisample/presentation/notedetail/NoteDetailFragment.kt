@@ -23,7 +23,6 @@ internal class NoteDetailFragment : Fragment() {
         arguments?.getLong(NOTE_ID)
             ?: throw IllegalArgumentException("noteId is required")
     }
-    private lateinit var binding : NoteDetailBinding
 
     companion object {
         fun newInstance(id: Long): NoteDetailFragment {
@@ -38,13 +37,16 @@ internal class NoteDetailFragment : Fragment() {
 
     private lateinit var viewModel: NoteDetailViewModel
 
+    private var _binding: NoteDetailBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = NoteDetailBinding.inflate(layoutInflater, container, false)
-        return binding.root //inflater.inflate(R.layout.note_detail, container, false)
+        _binding = NoteDetailBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,6 +90,11 @@ internal class NoteDetailFragment : Fragment() {
                 isNoteDeleted -> renderNoteDeleted()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun renderNoteDetailState(note: Note) {

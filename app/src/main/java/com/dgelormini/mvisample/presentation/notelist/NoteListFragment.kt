@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dgelormini.mvisample.R
+import com.dgelormini.mvisample.databinding.NoteDetailBinding
+import com.dgelormini.mvisample.databinding.NoteListBinding
 import com.dgelormini.mvisample.domain.GetNoteListUseCase
 import com.dgelormini.mvisample.domain.Note
 import com.dgelormini.mvisample.presentation.notedetail.NoteDetailFragment
@@ -26,13 +28,16 @@ class NoteListFragment : Fragment() {
     }
 
     private lateinit var viewModel: NoteListViewModel
+    private var _binding: NoteListBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.note_list, container, false)
+        _binding = NoteListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,6 +57,11 @@ class NoteListFragment : Fragment() {
         })
 
         viewModel.dispatch(Action.LoadNotes)*/
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun handleSideEffect(sideEffect: SideEffect) {
@@ -91,17 +101,17 @@ class NoteListFragment : Fragment() {
     }
 
     private fun renderLoadingState() {
-        requireActivity().findViewById<View>(R.id.loadingIndicator).visibility = View.VISIBLE
+        binding.loadingIndicator.visibility = View.VISIBLE
     }
 
     private fun renderErrorState() {
-        requireActivity().findViewById<View>(R.id.loadingIndicator).visibility = View.GONE
+        binding.loadingIndicator.visibility = View.GONE
         Toast.makeText(requireContext(), R.string.error_loading_notes, Toast.LENGTH_LONG).show()
     }
 
     private fun renderNotesState(notes: List<Note>) {
-        requireActivity().findViewById<View>(R.id.loadingIndicator).visibility = View.GONE
+        binding.loadingIndicator.visibility = View.GONE
         recyclerViewAdapter.updateNotes(notes)
-        requireActivity().findViewById<View>(R.id.notesRecyclerView).visibility = View.VISIBLE
+        binding.notesRecyclerView.visibility = View.VISIBLE
     }
 }
